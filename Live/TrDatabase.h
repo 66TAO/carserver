@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string.h>
+#include <time.h>
 #include "MegParse.h"
 #include "../Base/Log.h"
 #define MYSQL_IP  "127.0.0.1"    	   	   // Êý¾Ý¿âIP
@@ -25,9 +26,9 @@ public:
 	
 
 private:
-	void insert_total(struct isr_mess*& p);
+	void insert_total(struct Car_DATA*& p);
 	void update_total(struct isr_mess*& p);
-	void insert_isr(struct sap_mess*& p);
+	void insert_data(struct Car_DATA*& p);
 	void update_isr(struct sap_mess*& p);
 	void insert_sap(struct SAP_DATA*& q);
 

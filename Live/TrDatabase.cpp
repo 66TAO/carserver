@@ -43,11 +43,11 @@ bool TrDatabase::init_db()																			// ³õÊ¼»¯Êı¾İ¿âÁ¬½Ó
 	}
 }
 
-void TrDatabase::insert_total(struct isr_mess*& p)							// ²åÈë isr_total ±í¼ÇÂ¼
+void TrDatabase::insert_total(struct Car_DATA*& p)							// ²åÈë isr_total ±í¼ÇÂ¼
 {
 	memset(st_query, 0, sizeof(st_query));										// Çå¿Õ²éÑ¯»º´æ
 	// ¹¹Ôì SQL ²éÑ¯Óï¾ä£¬Ê¹ÓÃ sprintf ½«±äÁ¿ÖµÌî³äµ½²éÑ¯×Ö·û´®ÖĞ
-	sprintf((char*)st_query, "INSERT INTO isr_total(isr_id,net_id,isr_ip,isr_mac,isr_gps,isr_regist_time,isr_com_time,isr_cpu_rate,isr_ram_rate) VALUE(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');", p->isr_id, p->isr_net_id, p->isr_ip, p->isr_mac, p->isr_id, p->isr_reg_time, p->isr_reg_time, p->isr_cpu, p->isr_ram);						//ÏòÃûÎª isr_total µÄ±íÖĞ²åÈë ISR µÄ¸÷ÖÖĞÅÏ¢// ¹¹Ôì²åÈë isr_total ±í¼ÇÂ¼µÄ SQL Óï¾ä
+	sprintf((char*)st_query, "INSERT INTO car_total(Car_id,Car_reg_time,Car_com_time) VALUE(\'%s\',\'%s\',\'%s\');", p->car_id, p->car_com_time, p->car_com_time);						//ÏòÃûÎª isr_total µÄ±íÖĞ²åÈë ISR µÄ¸÷ÖÖĞÅÏ¢// ¹¹Ôì²åÈë isr_total ±í¼ÇÂ¼µÄ SQL Óï¾ä
 	temp_sql = st_query;
 	//LOGI("SQL: %s", temp_sql);
 	std::cout << "SQL:" << temp_sql << std::endl;
@@ -55,24 +55,24 @@ void TrDatabase::insert_total(struct isr_mess*& p)							// ²åÈë isr_total ±í¼ÇÂ
 	if (0 == state)
 	{
 		memset(st_query, 0, sizeof(st_query));									// ²åÈë³É¹¦£¬´´½¨¶ÔÓ¦µÄ isr_00xx ±í
-		sprintf((char*)st_query, "CREATE TABLE isr_00%s(sap_id char(2) NOT NULL,sap_reg_ym char(4) NOT NULL,sap_mac char(16) NULL,sap_isr_id char(2) NULL,sap_isr_mac char(16) NULL,net_id char(4) NULL,sap_gps char(11) NULL,sap_register_time varchar(24) NULL,sap_com_time varchar(24) NULL,com_type char(4) NULL,port_type char(3) NULL,sap_cpu_rate char(2) NULL,sap_ram_rate char(2) NULL,PRIMARY KEY(sap_id,sap_reg_ym)) ENGINE=InnoDB;", p->isr_id);//½¨±í£ºisr_00£¨p->isr_id£©// ¹¹Ôì´´½¨ isr_00xx ±íµÄ SQL Óï¾ä
-
+		sprintf((char*)st_query, "CREATE TABLE Car%s_%c%c%c%c(car_index INT NOT NULL AUTO_INCREMENT,radar_path char(255) NULL,inside_path char(255) NOT NULL,outside_path char(255) NULL,car_get_time char(64) NULL,car_com_time char(64) NULL,PRIMARY KEY (car_index));", p->car_id, p->year[0], p->year[1], p->month[0], p->month[1]);//½¨±í£ºisr_00£¨p->isr_id£©// ¹¹Ôì´´½¨ isr_00xx ±íµÄ SQL Óï¾ä
 		temp_sql = st_query;
 		std::cout << "SQL:" << temp_sql << std::endl;
 		state = mysql_query(&db_g2020, st_query);
 
 		if (0 == state)
 		{
-			std::cout << "Insert isr_total and creat isr_00" << p->isr_id << " Success!!" << std::endl;				// ´´½¨±í³É¹¦
+			std::cout << "Insert car_total and creat Car_" << p->car_id << " Success!!" << std::endl;				// ´´½¨±í³É¹¦
+			insert_data(p);														// ²åÈë car2 ±í¼ÇÂ¼
 		}
 		else
 		{
-			std::cout << "Create table isr_00" << p->isr_id << " failed:" << mysql_error(&db_g2020) << std::endl;		// ´´½¨±íÊ§°Ü£¬´òÓ¡´íÎóĞÅÏ¢
+			std::cout << "Create table Car_" << p->car_id << " failed:" << mysql_error(&db_g2020) << std::endl;		// ´´½¨±íÊ§°Ü£¬´òÓ¡´íÎóĞÅÏ¢
 		}
 	}
 	else
 	{
-		std::cout << "Insert isr_total failed:" << mysql_error(&db_g2020) << std::endl;						// ²åÈëÊ§°Ü£¬´òÓ¡´íÎóĞÅÏ¢
+		std::cout << "Insert car_total failed:" << mysql_error(&db_g2020) << std::endl;						// ²åÈëÊ§°Ü£¬´òÓ¡´íÎóĞÅÏ¢
 	}
 }
 
@@ -81,9 +81,25 @@ void TrDatabase::update_total(struct isr_mess*& p)
 	
 }
 
-void TrDatabase::insert_isr(struct sap_mess*& p)								
+void TrDatabase::insert_data(struct Car_DATA*& p)
 {
-	
+	memset(st_query, 0, sizeof(st_query));
+	sprintf((char*)st_query, "INSERT INTO Car%s_%c%c%c%c(radar_path,inside_path,outside_path,car_get_time,car_com_time)VALUE(\'%s\',\'%s\',\'%s\',\'%s\',NOW());", p->car_id, p->year[0], p->year[1], p->month[0], p->month[1], p->radar_file_path, p->inside_file_path, p->outside_file_path, p->car_get_time);
+
+	temp_sql = st_query;
+	state = mysql_query(&db_g2020, st_query);
+
+	if (0 == state)
+	{
+		//Êı¾İ²åÈë³É¹¦£¬ÔÙ¸üĞÂisr_totalºÍisr_00xx±íµÄĞÅÏ¢
+		std::cout << "INSERT INTO car_" << p->car_id << "_" << p->year[0] << p->year[1] << p->month[0] << p->month[1] << " Success!" << std::endl;
+	}
+	//²åÈëÊ§°Ü
+	else
+	{
+		std::cout << "INSERT INTO " << "car_" << p->car_id << " failed: " << mysql_error(&db_g2020) << std::endl;
+	}
+	return;
 }
 
 void TrDatabase::update_isr(struct sap_mess*& p)						
@@ -113,19 +129,30 @@ void TrDatabase::handle_06(struct SAP_DATA*& sap_data)
 
 void TrDatabase::handle(struct Car_DATA*& car_data)
 {
-	memset(st_query, 0, sizeof(st_query));										
-	sprintf((char*)st_query, "INSERT INTO car1(name_length,file_path,file_size) VALUE(\'%s\',\'%s\',\'%s\');", car_data->name_length, car_data->file_path, car_data->file_size);
-	
-	state = mysql_query(&db_g2020, st_query);
-	temp_sql = st_query;
-	std::cout << "sql: " << temp_sql << std::endl;
-
+	memset(st_query, 0, sizeof(st_query));										// Çå¿Õ²éÑ¯»º´æ
+	sprintf((char*)st_query, "SELECT * FROM car_total WHERE car_id = \'%s\';", car_data->car_id);			// ¹¹½¨ SQL ²éÑ¯Óï¾ä£¬²éÑ¯ÊÇ·ñ´æÔÚÓë isr_id Æ¥ÅäµÄ¼ÇÂ¼
+	state = mysql_query(&db_g2020, st_query);																	// Ö´ĞĞ SQL ²éÑ¯
+	temp_sql = st_query;																						// ±£´æ²éÑ¯Óï¾ä£¬ÓÃÓÚÊä³öµ÷ÊÔĞÅÏ¢
+	std::cout << "SQL: " << temp_sql << std::endl;
 	if (0 == state)
 	{
-		std::cout << "INSERT car1 success" << std::endl;
+		res = mysql_use_result(&db_g2020);																		// »ñÈ¡²éÑ¯½á¹û
+		if (NULL != (row = mysql_fetch_row(res)))																// ²éÑ¯½á¹û·Ç¿Õ£¬ËµÃ÷´æÔÚÓë isr_id Æ¥ÅäµÄ¼ÇÂ¼
+		{
+			std::cout << "car_id: " << car_data->car_id << " already exists" << std::endl;						// Êä³öÌáÊ¾ĞÅÏ¢
+			mysql_free_result(res);																				// ÊÍ·Å²éÑ¯½á¹û
+			insert_data(car_data);																				// ²åÈë car2 ±í¼ÇÂ¼
+		}
+		else
+		{
+			std::cout << "car_id: " << car_data->car_id << " does not exist" << std::endl;						// Êä³öÌáÊ¾ĞÅÏ¢
+			mysql_free_result(res);																				// ÊÍ·Å²éÑ¯½á¹û
+			insert_total(car_data);																				// ²åÈë car1 ±í¼ÇÂ¼
+		}
 	}
 	else
 	{
-		std::cout << "INSERT car1 Failed: " << mysql_error(&db_g2020) << std::endl;
+		std::cout << "SELECT car_total failed: " << mysql_error(&db_g2020) << std::endl;						// ²éÑ¯Ê§°Ü£¬Êä³ö´íÎóĞÅÏ¢
 	}
+
 }

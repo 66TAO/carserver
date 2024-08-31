@@ -194,8 +194,16 @@ struct sap_data_33
 
 struct Car_DATA
 {
+    char car_id[4] = "0";             //大气采集设备的ID
+	char car_get_time[64] = "0";      //大气采集设备的时间
     char name_length[255];
     char file_path[255];
+    char radar_file_path[255];
+	char inside_file_path[255];
+	char outside_file_path[255];
     char file_size[255];
+    char year[3];				//注册年份
+    char month[3];				//注册月份
+    char car_com_time[64];		//接入设备的注册时间
 };
 

@@ -14,7 +14,7 @@
 namespace fs = std::filesystem;
 
 const size_t CHUNK_SIZE = 4096;
-const std::string BASE_DIR = "accept"; // 确保为绝对路径或相对路径
+const std::string BASE_DIR = "/database/accept"; // 确保为绝对路径或相对路径
 
 class TrServer;
 class TrDatabase;
@@ -28,9 +28,12 @@ public:
 	virtual ~TrConnection();
 protected:
 	virtual void handleReadBytes(int client_socket);
+	void analysis_path(struct Car_DATA*& car_data, std::string file_path);
 
 private:
 	std::string calculate_md5(const fs::path& path);
+	char* getTime();
+	char tmp_time[64];//时间戳储存
 	std::string mPeerIp;
 	TrDatabase* Trdb;
 	int clientfd_cur;

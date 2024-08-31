@@ -138,73 +138,81 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ClCompile>
       <AdditionalIncludeDirectories>F:\Program Files\MySQL\MySQL Server 8.0\lib;F:\Program Files\MySQL\MySQL Server 8.0\include;/www/server/mysql/lib;/www/server/mysql/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>/www/server/mysql/lib/libmysqlclient.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lpthread -lcrypto %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
