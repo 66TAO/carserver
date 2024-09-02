@@ -6,6 +6,8 @@
 #include "InetAddress.h"
 #include "TrDatabase.h"
 #include <map>
+#include <boost/asio.hpp>
+using boost::asio::ip::tcp;
 
 class TrConnection;
 class TrServer {
@@ -31,6 +33,7 @@ private:
     static void TaskCallback(void*);
 
 private:
+    void thread_process_send_message();
     void remove_by_value(std::map<std::string, int>& map, const int& value);
     UsageEnvironment* mEnv;
     int  mFd;

@@ -111,5 +111,8 @@
     <ClInclude Include="Scheduler\UsageEnvironment.h">
       <Filter>Scheduler</Filter>
     </ClInclude>
+    <ClInclude Include="Base\json.hpp">
+      <Filter>Base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

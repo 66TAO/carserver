@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string.h>
 #include <time.h>
+#include <boost/asio.hpp>
+#include <../Base/json.hpp>
 #include "MegParse.h"
 #include "../Base/Log.h"
 #define MYSQL_IP  "127.0.0.1"    	   	   // Êý¾Ý¿âIP
@@ -23,6 +25,7 @@ public:
 	void handle_06(struct SAP_DATA*& sap_data);
 	void handle_33(struct sap_data_33*& sap_data);
 	void handle(struct Car_DATA*& car_data);
+	std::string handle_request(const std::string& request);
 	
 
 private:

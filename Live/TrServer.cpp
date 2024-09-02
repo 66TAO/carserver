@@ -5,6 +5,8 @@
 #include"../Scheduler/ThreadPool.h"
 #include <thread>
 
+
+
 TrServer* TrServer::createNew(UsageEnvironment* env, Ipv4Address& addr, TrDatabase* trdb) {
 
     return new TrServer(env, addr, trdb);
@@ -50,6 +52,85 @@ TrServer::~TrServer()
     sockets::close(mFd);
 }
 
+void TrServer::thread_process_send_message() {
+	try {
+        boost::asio::io_context io_context;
+
+        // 创建一个TCP服务器，监听8080端口
+        tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 1234));
+
+        std::cout << "Server is running on port 1234..." << std::endl;
+
+        for (;;) {
+            tcp::socket socket(io_context);
+            acceptor.accept(socket);
+
+            // 读取客户端请求
+            boost::asio::streambuf request;
+            boost::asio::read_until(socket, request, "\r\n");
+
+            std::istream request_stream(&request);
+            std::string request_method;
+            std::string request_uri;
+            std::string http_version;
+            request_stream >> request_method >> request_uri >> http_version;
+
+            std::string response = Trdb->handle_request(request_uri);
+			//std::cout << response << std::endl;
+            // 发送响应
+            boost::asio::write(socket, boost::asio::buffer(response));
+        }
+    }
+    catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+
+    //try {
+    //    boost::asio::io_context io_context;
+
+    //    // 创建一个TCP服务器，监听1234端口
+    //    tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 1234));
+
+    //    std::cout << "Server is running on port 1234..." << std::endl;
+
+    //    for (;;) {
+    //        tcp::socket socket(io_context);
+    //        acceptor.accept(socket);
+
+    //        try {
+    //            // 读取客户端请求
+    //            boost::asio::streambuf request;
+    //            boost::asio::read_until(socket, request, "\r\n\r\n");
+
+    //            std::istream request_stream(&request);
+    //            std::string request_method;
+    //            std::string request_uri;
+    //            std::string http_version;
+    //            request_stream >> request_method >> request_uri >> http_version;
+
+    //            // 处理请求并生成响应
+    //            std::string response = Trdb->handle_request(request_uri);
+
+    //            // 发送响应
+    //            boost::asio::write(socket, boost::asio::buffer(response));
+    //        }
+    //        catch (boost::system::system_error& e) {
+    //            if (e.code() == boost::asio::error::eof) {
+    //                std::cerr << "Client disconnected: " << e.what() << std::endl;
+    //                // 这里可以选择继续处理或关闭连接
+    //            }
+    //            else {
+    //                throw;  // 重新抛出异常以捕获其他类型的错误
+    //            }
+    //        }
+    //    }
+    //}
+    //catch (std::exception& e) {
+    //    std::cerr << "Exception: " << e.what() << std::endl;
+    //}
+
+}
+
 void TrServer::remove_by_value(std::map<std::string, int>& map, const int& value)				// 移除map中特定的值
 {
     for (auto it = map.begin(); it != map.end(); )
@@ -67,8 +148,8 @@ void TrServer::remove_by_value(std::map<std::string, int>& map, const int& value
 
 void TrServer::start() {															// 启动服务器
     LOGI("Start thread");
-    //std::thread t1(&TrServer::thread_process_send_message, this);		// 创建一个线程执行消息发送任务
-    //t1.detach();														// 分离线程，使其在后台运行
+    std::thread t1(&TrServer::thread_process_send_message, this);		// 创建一个线程执行消息发送任务
+    t1.detach();														// 分离线程，使其在后台运行
     mListen = true;														// 标记服务器监听状态为true
     sockets::listen(mFd, 60);											// 开始监听客户端连接请求，backlog设置为60（最大链接个数）
     mEnv->scheduler()->addIOEvent(mAcceptIOEvent);						// 将Accept事件添加到事件调度器中
@@ -113,6 +194,7 @@ void TrServer::cbCloseConnect(void* arg) {							// 关闭连接的回调函数
     TrServer* server = (TrServer*)arg;
     server->handleCloseConnect();
 }
+
 void TrServer::handleCloseConnect() {																// 处理关闭连接事件
 
 

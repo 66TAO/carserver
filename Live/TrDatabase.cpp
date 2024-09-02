@@ -156,3 +156,142 @@ void TrDatabase::handle(struct Car_DATA*& car_data)
 	}
 
 }
+
+std::string TrDatabase::handle_request(const std::string& request) {
+	std::string clean_request = request;
+	clean_request.erase(std::remove(clean_request.begin(), clean_request.end(), '/'), clean_request.end());
+	memset(st_query, 0, sizeof(st_query));  // 清空查询缓存
+	sprintf((char*)st_query, "SELECT radar_path,inside_path,outside_path FROM Car01_2408 WHERE car_get_time LIKE '%s%%';", clean_request.c_str());
+
+	state = mysql_query(&db_g2020, st_query);
+	temp_sql = st_query;
+	std::cout << "SQL: " << temp_sql << std::endl;
+
+	nlohmann::json json_response;
+
+	if (0 == state) {
+		res = mysql_use_result(&db_g2020);
+		if (res == NULL) {
+			LOGE(mysql_error(&db_g2020));
+			return "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n";
+		}
+
+		if (mysql_num_rows(res) == 0) {
+			while ((row = mysql_fetch_row(res)) != NULL) {
+				nlohmann::json record;
+				record["radar_path"] = row[0] ? row[0] : "";
+				record["inside_path"] = row[1] ? row[1] : "";
+				record["outside_path"] = row[2] ? row[2] : "";
+				json_response.push_back(record);
+			}
+			mysql_free_result(res);
+		}
+		else {
+			mysql_free_result(res);
+			return "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+		}
+	}
+	else {
+		std::cout << "select error：" << mysql_error(&db_g2020) << std::endl;
+
+		if (0 != mysql_ping(&db_g2020)) {
+			mysql_close(&db_g2020);
+			init_db();
+		}
+		return "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n";
+	}
+
+	// 如果结果为空，也返回404
+	if (json_response.empty()) {
+		return "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+	}
+
+	// 将JSON对象转换为字符串
+	std::string response = json_response.dump();
+
+	// 添加HTTP头信息
+	std::string http_response = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\nContent-Length: " + std::to_string(response.size()) + "\r\n\r\n" + response;
+	return http_response;
+}
+
+//std::string TrDatabase::handle_request(const std::string& request) {
+//	// 处理请求并生成响应
+//	if (request == "/hello") {
+//		return "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!";
+//	}
+//	else {
+//		return "HTTP/1.1 404 Not Found\r\nContent-Length: 9\r\n\r\nNot Found";
+//	}
+//}
+
+//std::string TrDatabase::handle_request(const std::string& request) {
+//	std::string clean_request = request;
+//	clean_request.erase(std::remove(clean_request.begin(), clean_request.end(), '/'), clean_request.end());
+//	memset(st_query, 0, sizeof(st_query));  // 清空查询缓存
+//	sprintf((char*)st_query, "SELECT radar_path,inside_path,outside_path FROM Car01_2408 WHERE car_get_time LIKE '%s%%';", clean_request.c_str());
+//	//sprintf((char*)st_query, "SELECT radar_path,inside_path,outside_path FROM Car01_2408 WHERE car_get_time = '%s';", clean_request.c_str());
+//	//sprintf((char*)st_query, "SELECT radar_path,inside_path,outside_path FROM Car01_2408 WHERE car_index = '%s';", clean_request.c_str());
+//	state = mysql_query(&db_g2020, st_query);
+//	temp_sql = st_query;
+//	std::cout << "SQL: " << temp_sql << std::endl;
+//
+//	std::string result;
+//
+//	if (0 == state) {
+//		res = mysql_use_result(&db_g2020);
+//		if (res == NULL) {
+//			LOGE(mysql_error(&db_g2020));
+//			return "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n";
+//		}
+//
+//		//if (mysql_num_rows(res) == 0) {
+//		//	mysql_free_result(res);
+//		//	return "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+//		//}
+//		//std::cout << mysql_num_rows(res) << std::endl;
+//		//std::cout << res << std::endl;
+//		//while ((row = mysql_fetch_row(res)) != NULL) {
+//		//	std::string radar_path = row[0] ? row[0] : "";
+//		//	std::string inside_path = row[1] ? row[1] : "";
+//		//	std::string outside_path = row[2] ? row[2] : "";
+//
+//		//	// 将结果拼接成一个字符串或按需处理
+//		//	result += "Radar Path: " + radar_path + ", Inside Path: " + inside_path + ", Outside Path: " + outside_path + "\n";
+//		//}
+//
+//		//mysql_free_result(res);
+//
+//		if (mysql_num_rows(res) == 0) {
+//			while ((row = mysql_fetch_row(res)) != NULL) {
+//				std::string radar_path = row[0] ? row[0] : "";
+//				std::string inside_path = row[1] ? row[1] : "";
+//				std::string outside_path = row[2] ? row[2] : "";
+//
+//				// 将结果拼接成一个字符串或按需处理
+//				result += "Radar Path: " + radar_path + ", Inside Path: " + inside_path + ", Outside Path: " + outside_path + "\n";
+//			}
+//		}
+//		else
+//		{
+//			mysql_free_result(res);
+//			return "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+//		}
+//	}
+//	else {
+//		std::cout << "select error：" << mysql_error(&db_g2020) << std::endl;
+//
+//		if (0 != mysql_ping(&db_g2020)) {
+//			mysql_close(&db_g2020);
+//			init_db();
+//		}
+//		return "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n";
+//	}
+//
+//	if (result.empty()) {
+//		return "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+//	}
+//
+//	// 添加HTTP头信息
+//	std::string http_response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + std::to_string(result.size()) + "\r\n\r\n" + result;
+//	return http_response;
+//}

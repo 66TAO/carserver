@@ -117,6 +117,7 @@
     <ClCompile Include="Scheduler\UsageEnvironment.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Base\json.hpp" />
     <ClInclude Include="Base\Log.h" />
     <ClInclude Include="Live\Buffer.h" />
     <ClInclude Include="Live\InetAddress.h" />
